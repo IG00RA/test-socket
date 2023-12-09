@@ -5,7 +5,13 @@ const { handleMongooseError } = require("../helpers");
 const addSchema = Joi.object({
   name: Joi.string().required(),
   surname: Joi.string().required(),
-  numberPhone: Joi.string().required(),
+  numberPhone: Joi.string()
+    .pattern(/^\+380\d{9}$/)
+    .required()
+    .messages({
+      "string.pattern.base":
+        '"numberPhone" must be in the format +380xxxxxxxxx',
+    }),
   country: Joi.string().required(),
   height: Joi.number().required(),
   weight: Joi.number().required(),
@@ -24,18 +30,19 @@ const userSchema = new Schema(
     numberPhone: {
       type: String,
       required: [true, "Set Phone number for user"],
+      unique: true,
     },
     country: {
       type: String,
-      required: [true],
+      required: true,
     },
     height: {
       type: Number,
-      required: [true],
+      required: true,
     },
     weight: {
       type: Number,
-      required: [true],
+      required: true,
     },
   },
   { versionKey: false }
