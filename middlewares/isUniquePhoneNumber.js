@@ -5,17 +5,16 @@ const isUniquePhoneNumber = async (req, res, next) => {
   try {
     const { numberPhone } = req.body;
     const { userId } = req.params;
+    if (userId) {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw HttpError(404, "User not found");
+      }
 
-    const user = await User.findById(userId);
-
-    if (!user) {
-      throw HttpError(404, "User not found");
+      if (user.numberPhone === numberPhone) {
+        return next();
+      }
     }
-
-    if (user.numberPhone === numberPhone) {
-      return next();
-    }
-
     const existingUser = await User.findOne({ numberPhone });
     if (existingUser) {
       return res
